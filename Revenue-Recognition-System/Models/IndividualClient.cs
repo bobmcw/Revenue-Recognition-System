@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Revenue_Recognition_System.BaseClasses;
 
 namespace Revenue_Recognition_System.Models;
 
