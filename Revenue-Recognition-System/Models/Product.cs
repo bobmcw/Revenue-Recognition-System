@@ -17,6 +17,7 @@ public class Product
    public string Version { get; set; } = string.Empty;
    public Category Category { get; set; }
    public LicenceType LicenceType { get; set; }
+   [Column(TypeName = "decimal(10,2)")]
    public decimal AnnualCost { get; set; }
 
    public IEnumerable<Contract> Contracts { get; set; } = [];
