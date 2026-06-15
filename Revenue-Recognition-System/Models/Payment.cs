@@ -5,7 +5,7 @@ namespace Revenue_Recognition_System.Models;
 public class Payment
 {
     public int Id { get; set; }
-    [Column("decimal(10,2)")] 
+    [Column(TypeName = "decimal(10,2)")] 
     public decimal Amount { get; set; }
 
     public Client Client { get; set; } = null!;
