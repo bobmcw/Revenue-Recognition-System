@@ -17,4 +17,5 @@ public abstract class Client
    public string PhoneNumber { get; set; } = string.Empty;
 
    public IEnumerable<Contract> Contracts { get; set; } = [];
+   public IEnumerable<Payment> Payments { get; set; } = [];
 }

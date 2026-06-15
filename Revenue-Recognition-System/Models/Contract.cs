@@ -12,6 +12,7 @@ public class Contract
     public DateTime? EndDate { get; set; }
     
     public IEnumerable<Discount> ApplicableDiscounts { get; set; } = [];
+    public IEnumerable<Payment> Payments { get; set; } = [];
     public Client Client { get; set; } = null!;
     public Product Product { get; set; } = null!;
 }
