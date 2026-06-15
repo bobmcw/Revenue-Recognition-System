@@ -1,6 +1,6 @@
 namespace Revenue_Recognition_System.Enums;
 
-public enum ClientTypeId
+public enum ClientType
 {
    Individual,
    Company

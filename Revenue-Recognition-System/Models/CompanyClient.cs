@@ -1,21 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Revenue_Recognition_System.Enums;
-using Revenue_Recognition_System.Interfaces;
+using Revenue_Recognition_System.BaseClasses;
 
 namespace Revenue_Recognition_System.Models;
 
 [Table("CompanyClients")]
-public class CompanyClient : IClient
+public class CompanyClient : Client
 {
-    [Key]
-    public int Id { get; set; }
-    public ClientTypeId ClientTypeId { get; set; } = ClientTypeId.Company;
-    [MaxLength(50)]
-    public string Email { get; set; } = string.Empty;
-    [MaxLength(15)]
-    public string PhoneNumber { get; set; } = string.Empty;
-
     [MaxLength(100)]
     public string Name { get; set; } = string.Empty;
     [MaxLength(200)]
