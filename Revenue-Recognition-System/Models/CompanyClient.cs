@@ -10,8 +10,6 @@ public class CompanyClient : Client
     public string Name { get; set; } = string.Empty;
     [MaxLength(200)]
     public string Adres { get; set; } = string.Empty;
-    [MaxLength(13)]
-    public string Phone { get; set; } = string.Empty;
     [Length(10, 10)]
     public string Krs { get; set; } = string.Empty;
 }

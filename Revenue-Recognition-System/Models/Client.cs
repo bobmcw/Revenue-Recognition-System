@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Revenue_Recognition_System.Models;
-
 [Table("Clients")]
 public abstract class Client
 {
