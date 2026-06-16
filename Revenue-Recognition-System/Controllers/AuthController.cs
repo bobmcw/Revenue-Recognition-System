@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Revenue_Recognition_System.Exceptions;
 using Revenue_Recognition_System.Models;
 using Revenue_Recognition_System.Services;
 
@@ -21,7 +22,6 @@ public class AuthController : ControllerBase
         _config = config;
         _users = users;
     }
-
     public record LoginDto(string Username, string Password);
     public record TokensDto(string AccessToken, string RefreshToken);
 
@@ -39,7 +39,20 @@ public class AuthController : ControllerBase
 
         return Ok(tokens);
     }
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(LoginDto dto)
+    {
+        try
+        {
+            await _users.CreateUserAsync(dto.Username, dto.Password);
+        }
+        catch (PasswordPolicyException e)
+        {
+            return BadRequest(e.Message);
+        }
 
+        return Created();
+    }
     private TokensDto GenerateTokens(User user)
     {
         var claims = new List<Claim>
