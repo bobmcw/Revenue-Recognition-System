@@ -61,4 +61,14 @@ public class UserService(DatabaseContext ctx) : IUserService
             { CreationDate = DateTime.Now, ExpiryDate = DateTime.Now.AddMinutes(20), Token = token, User = usr });
         await ctx.SaveChangesAsync();
     }
+
+    public async Task<User?> FindByRefreshTokenAsync(string token)
+    {
+        return await ctx.Users.Where(u => u.RefreshTokens.Any(t => t.Token == token)).FirstOrDefaultAsync();
+    }
+
+    public async Task<RefreshToken?> GetRefreshTokenAsync(User u, string token)
+    {
+        return await ctx.RefreshTokens.Where(t => t.User.Id == u.Id && t.Token == token).FirstOrDefaultAsync();
+    }
 }

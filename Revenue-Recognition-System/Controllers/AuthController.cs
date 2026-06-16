@@ -81,4 +81,30 @@ public class AuthController : ControllerBase
 
         return new TokensDto(accessToken, refreshToken);
     }
+    public record RefreshDto(string RefreshToken);
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh(RefreshDto dto)
+    {
+        var user = await _users.FindByRefreshTokenAsync(dto.RefreshToken);
+        if (user is null)
+        {
+            return Unauthorized("Invalid refresh token.");
+        }
+
+        var token = await _users.GetRefreshTokenAsync(user, dto.RefreshToken);
+        if (token is null)
+        {
+            return Unauthorized("Invalid refresh token.");
+        }
+        if (token.ExpiryDate < DateTime.UtcNow)
+        {
+            return Unauthorized("Refresh token has expired.");
+        }
+
+        var newTokens = GenerateTokens(user);
+        await _users.SaveRefreshTokenAsync(user.Id, newTokens.RefreshToken);
+
+        return Ok(newTokens);
+    }
 }
