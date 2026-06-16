@@ -8,6 +8,8 @@ public class Payment
     [Column(TypeName = "decimal(10,2)")] 
     public decimal Amount { get; set; }
 
-    public Client Client { get; set; } = null!;
-    public Contract Contract { get; set; } = null!;
+    public int ClientId { get; set; }
+    public int ContractId { get; set; }
+    [ForeignKey(nameof(ClientId))] public Client Client { get; set; } = null!;
+    [ForeignKey(nameof(ContractId))] public Contract Contract { get; set; } = null!;
 }

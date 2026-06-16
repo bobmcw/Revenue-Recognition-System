@@ -179,6 +179,63 @@ namespace Revenue_Recognition_System.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("Revenue_Recognition_System.Models.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("JwtId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
+            modelBuilder.Entity("Revenue_Recognition_System.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("Revenue_Recognition_System.Models.CompanyClient", b =>
                 {
                     b.HasBaseType("Revenue_Recognition_System.Models.Client");
@@ -257,13 +314,13 @@ namespace Revenue_Recognition_System.Migrations
                     b.HasOne("Revenue_Recognition_System.Models.Client", "Client")
                         .WithMany("Payments")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Revenue_Recognition_System.Models.Contract", "Contract")
                         .WithMany("Payments")
                         .HasForeignKey("ContractId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Client");
@@ -276,6 +333,17 @@ namespace Revenue_Recognition_System.Migrations
                     b.HasOne("Revenue_Recognition_System.Models.Discount", null)
                         .WithMany("Products")
                         .HasForeignKey("DiscountId");
+                });
+
+            modelBuilder.Entity("Revenue_Recognition_System.Models.RefreshToken", b =>
+                {
+                    b.HasOne("Revenue_Recognition_System.Models.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Revenue_Recognition_System.Models.CompanyClient", b =>
@@ -318,6 +386,11 @@ namespace Revenue_Recognition_System.Migrations
             modelBuilder.Entity("Revenue_Recognition_System.Models.Product", b =>
                 {
                     b.Navigation("Contracts");
+                });
+
+            modelBuilder.Entity("Revenue_Recognition_System.Models.User", b =>
+                {
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }

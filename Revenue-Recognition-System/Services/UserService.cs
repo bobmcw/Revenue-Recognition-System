@@ -13,6 +13,6 @@ public class UserService(DatabaseContext ctx) : IUserService
 
     public Task SaveRefreshTokenAsync(int id, string token)
     {
-        ctx.Ref
+        throw new NotImplementedException();
     }
 }
