@@ -28,16 +28,17 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginDto dto)
     {
-        var user = await _users.AuthenticateAsync(dto.Username, dto.Password);
-        if (user is null)
+        try
         {
-            return Unauthorized();
+            var user = await _users.AuthenticateAsync(dto.Username, dto.Password);
+            var tokens = GenerateTokens(user);
+            await _users.SaveRefreshTokenAsync(user.Id, tokens.RefreshToken);
+            return Ok(tokens);
         }
-
-        var tokens = GenerateTokens(user);
-        await _users.SaveRefreshTokenAsync(user.Id, tokens.RefreshToken);
-
-        return Ok(tokens);
+        catch(Exception e) when (e is NoSuchUserException or InvalidPasswordException)
+        {
+            return Unauthorized(e.Message);
+        }
     }
     [HttpPost("register")]
     public async Task<IActionResult> Register(LoginDto dto)

@@ -13,5 +13,5 @@ public class User
     [Length(64, 64)]
     public string PasswordHash { get; set; } = string.Empty;
 
-    public IEnumerable<RefreshToken> RefreshTokens { get; set; } = [];
+    public IEnumerable<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }
