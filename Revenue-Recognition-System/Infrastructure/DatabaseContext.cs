@@ -11,4 +11,6 @@ public class DatabaseContext(DbContextOptions opt) : DbContext(opt)
    public DbSet<Contract> Contracts { get; set; }
    public DbSet<Discount> Discounts { get; set; }
    public DbSet<Product> Products { get; set; }
+   public DbSet<User> Users { get; set; }
+   public DbSet<RefreshToken> RefreshTokens { get; set; }
 }
