@@ -14,7 +14,7 @@ public class Contract
     [Column(TypeName = "decimal(10,2)")]
     public decimal Cost { get; set; }
     public IEnumerable<Discount> ApplicableDiscounts { get; set; } = new List<Discount>();
-    public IEnumerable<Payment> Payments { get; set; } = [];
+    public IEnumerable<Payment> Payments { get; set; } = new List<Payment>();
     public Client Client { get; set; } = null!;
     public Product Product { get; set; } = null!;
 }
