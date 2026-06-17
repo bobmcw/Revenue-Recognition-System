@@ -21,7 +21,8 @@ public class PaymentController(IPaymentService service) : ControllerBase
             {
                 return Created();
             }
-            return Created("", new {Message = msg});
+
+            return Created("", new { Message = msg });
         }
         catch (InvalidPaymentException e)
         {
@@ -30,6 +31,10 @@ public class PaymentController(IPaymentService service) : ControllerBase
         catch (NoSuchContractException e)
         {
             return NotFound(e.Message);
+        }
+        catch (ExpiredException e)
+        {
+            return Conflict(e.Message);
         }
     }
 }

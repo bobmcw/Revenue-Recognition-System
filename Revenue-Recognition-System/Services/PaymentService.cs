@@ -20,6 +20,13 @@ public class PaymentService(DatabaseContext ctx) : IPaymentService
             throw new InvalidPaymentException("cannot pay for a paid or canceled contract");
         }
 
+        if (contract.EndDate > DateTime.Now)
+        {
+            contract.Status = ContractStatus.Canceled;
+            await ctx.SaveChangesAsync();
+            throw new ExpiredException("contract expired and has beed canceled");
+        }
+
         var payments = await ctx.Payments.Where(p => p.ContractId == contract.Id).ToListAsync();
         decimal sum = 0.0m;
         foreach (var payment in payments)
