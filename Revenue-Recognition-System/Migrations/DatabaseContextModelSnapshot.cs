@@ -58,6 +58,9 @@ namespace Revenue_Recognition_System.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(10,2)");
+
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
