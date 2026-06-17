@@ -12,4 +12,6 @@ public class IndividualClient : Client
     public string LastName { get; set; } = string.Empty;
     [Length(11, 11)]
     public string Pesel { get; set; } = string.Empty;
+
+    public bool IsDeleted { get; set; }
 }

@@ -45,4 +45,67 @@ public class ClientService(DatabaseContext ctx) : IClientService
         await ctx.Clients.AddAsync(newClient);
         await ctx.SaveChangesAsync();
     }
+
+    public async Task UpdateClient(int id, CreateBaseClientDto dto)
+    {
+        switch (dto)
+        {
+            case CreateIndividualClientDto individual:
+                var client = await ctx.Clients
+                    .OfType<IndividualClient>()
+                    .FirstOrDefaultAsync(c => c.Id == id);
+                if (client is null)
+                {
+                    throw new NoSuchClientException();
+                }
+                if (individual.Pesel != client.Pesel)
+                {
+                    throw new IllegalModificationException("cannot change pesel");
+                }
+                client.FirstName = individual.FirstName;
+                client.LastName = individual.LastName;
+                client.Email = individual.Email;
+                client.PhoneNumber = individual.Phone;
+                break;
+            case CreateCompanyClientDto company:
+                var clientCompany = await ctx.Clients
+                    .OfType<CompanyClient>()
+                    .FirstOrDefaultAsync(c => c.Id == id);
+                if (clientCompany is null)
+                {
+                    throw new NoSuchClientException();
+                }
+                if (company.Krs != clientCompany.Krs)
+                {
+                    throw new IllegalModificationException("cannot change KRS");
+                }
+
+                clientCompany.Adres = company.Adres;
+                clientCompany.Name = company.Name;
+                clientCompany.Email = company.Email;
+                clientCompany.PhoneNumber = company.Phone;
+                break;
+        }
+    }
+
+    public async Task DeleteClient(int id)
+    {
+        var client = await ctx.Clients.FirstOrDefaultAsync(c => c.Id == id);
+        if (client is null)
+        {
+            throw new NoSuchClientException();
+        }
+        switch (client)
+        {
+            case IndividualClient individualClient:
+                individualClient.FirstName = "";
+                individualClient.LastName = "";
+                individualClient.Pesel = "";
+                individualClient.Email = "";
+                individualClient.IsDeleted = true;
+                break;
+            case CompanyClient companyClient:
+                throw new IllegalModificationException("company client cannot be deleted");
+        }
+    }
 }
