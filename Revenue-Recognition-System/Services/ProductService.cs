@@ -26,7 +26,7 @@ public class ProductService(DatabaseContext ctx, IDiscountService discountServic
 
     public async Task<string> CreateContractForProductAsync(CreateContractDto dto)
     {
-        var client = await ctx.Clients.FirstOrDefaultAsync(c => c.Id == dto.ClientId);
+        var client = await ctx.Clients.Include(client => client.Contracts).ThenInclude(contract => contract.Product).FirstOrDefaultAsync(c => c.Id == dto.ClientId);
         if (client is null)
         {
             throw new NoSuchClientException();
@@ -36,6 +36,11 @@ public class ProductService(DatabaseContext ctx, IDiscountService discountServic
         if (prod is null)
         {
             throw new NoSuchProductException();
+        }
+
+        if (client.Contracts.Any(c => c.Product == prod))
+        {
+            throw new InvalidDataException("client already has a contract for this product");
         }
 
         List<string> msgs = [];
