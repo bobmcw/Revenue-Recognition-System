@@ -15,5 +15,5 @@ public class Discount
    public DateTime StartDate { get; set; } 
    public DateTime EndDate { get; set; }
 
-   public IEnumerable<Product> Products { get; set; } = [];
+   public IEnumerable<Product> Products { get; set; } = new List<Product>();
 }

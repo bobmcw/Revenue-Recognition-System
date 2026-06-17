@@ -13,7 +13,7 @@ public class Contract
     public DateTime? EndDate { get; set; }
     [Column(TypeName = "decimal(10,2)")]
     public decimal Cost { get; set; }
-    public IEnumerable<Discount> ApplicableDiscounts { get; set; } = [];
+    public IEnumerable<Discount> ApplicableDiscounts { get; set; } = new List<Discount>();
     public IEnumerable<Payment> Payments { get; set; } = [];
     public Client Client { get; set; } = null!;
     public Product Product { get; set; } = null!;

@@ -20,5 +20,5 @@ public class Product
    [Column(TypeName = "decimal(10,2)")]
    public decimal AnnualCost { get; set; }
 
-   public IEnumerable<Contract> Contracts { get; set; } = [];
+   public IEnumerable<Contract> Contracts { get; set; } = new List<Contract>();
 }

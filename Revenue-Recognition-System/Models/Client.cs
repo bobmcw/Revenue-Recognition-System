@@ -15,6 +15,6 @@ public abstract class Client
    [MaxLength(15)]
    public string PhoneNumber { get; set; } = string.Empty;
 
-   public IEnumerable<Contract> Contracts { get; set; } = [];
-   public IEnumerable<Payment> Payments { get; set; } = [];
+   public IEnumerable<Contract> Contracts { get; set; } = new List<Contract>();
+   public IEnumerable<Payment> Payments { get; set; } = new List<Payment>();
 }
