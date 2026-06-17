@@ -33,6 +33,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IDiscountService, DiscountService>();
 
 builder.Services.AddSwaggerGen(options =>
 {
