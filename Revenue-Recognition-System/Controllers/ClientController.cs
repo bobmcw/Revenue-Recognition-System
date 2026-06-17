@@ -18,7 +18,7 @@ public class ClientController(IClientService serv) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostClient([FromBody] CreateBaseClientDto dto)
+    public async Task<IActionResult> PostClientAsync([FromBody] CreateBaseClientDto dto)
     {
         try
         {
