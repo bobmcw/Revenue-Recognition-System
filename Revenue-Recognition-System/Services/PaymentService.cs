@@ -3,6 +3,7 @@ using Revenue_Recognition_System.Enums;
 using Revenue_Recognition_System.Exceptions;
 using Revenue_Recognition_System.Infrastructure;
 using Revenue_Recognition_System.Models;
+using Revenue_Recognition_System.PostDTOs;
 
 namespace Revenue_Recognition_System.Services;
 
@@ -54,5 +55,45 @@ public class PaymentService(DatabaseContext ctx) : IPaymentService
         await ctx.Payments.AddAsync(new Payment { Amount = toPay, Client = contract.Client, Contract = contract });
         await ctx.SaveChangesAsync();
         return string.Join(" ", msgs);
+    }
+
+    public async Task<RevenueDto> CalculateRevenueAsync()
+    {
+        decimal revenue = 0.0m;
+        var paidContracts = await ctx.Contracts.Where(c => c.Status == ContractStatus.Paid).ToListAsync();
+        foreach (var paidContract in paidContracts)
+        {
+            revenue += paidContract.Cost;
+        }
+
+        decimal expectedRecenue = 0.0m;
+        var pendingContracts = await ctx.Contracts.Where(c => c.Status == ContractStatus.Created).ToListAsync();
+        foreach (var pendingContract in pendingContracts)
+        {
+            expectedRecenue += pendingContract.Cost;
+        }
+
+        expectedRecenue += revenue;
+        return new RevenueDto { Revenue = revenue, ExpectedRevenue = expectedRecenue };
+    }
+
+    public async Task<RevenueDto> CalculateRevenueAsync(int productId)
+    {
+        decimal revenue = 0.0m;
+        var paidContracts = await ctx.Contracts.Where(c => c.Status == ContractStatus.Paid && c.Product.Id == productId).ToListAsync();
+        foreach (var paidContract in paidContracts)
+        {
+            revenue += paidContract.Cost;
+        }
+
+        decimal expectedRecenue = 0.0m;
+        var pendingContracts = await ctx.Contracts.Where(c => c.Status == ContractStatus.Created && c.Product.Id == productId).ToListAsync();
+        foreach (var pendingContract in pendingContracts)
+        {
+            expectedRecenue += pendingContract.Cost;
+        }
+
+        expectedRecenue += revenue;
+        return new RevenueDto { Revenue = revenue, ExpectedRevenue = expectedRecenue };
     }
 }

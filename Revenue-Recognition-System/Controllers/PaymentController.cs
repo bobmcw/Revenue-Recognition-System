@@ -37,4 +37,17 @@ public class PaymentController(IPaymentService service) : ControllerBase
             return Conflict(e.Message);
         }
     }
+
+    [HttpGet]
+    public async Task<IActionResult> CalculateRevenueAsync()
+    {
+        return Ok(await service.CalculateRevenueAsync());
+    }
+    [HttpGet]
+    [Route("{id:int}")]
+    public async Task<IActionResult> CalculateRevenueAsync([FromRoute] int id)
+    {
+        return Ok(await service.CalculateRevenueAsync(id));
+    }
+
 }
