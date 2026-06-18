@@ -39,15 +39,15 @@ public class PaymentController(IPaymentService service) : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> CalculateRevenueAsync()
+    public async Task<IActionResult> CalculateRevenueAsync([FromQuery] string? currencyCode)
     {
-        return Ok(await service.CalculateRevenueAsync());
+        return Ok(await service.CalculateRevenueAsync(currencyCode));
     }
     [HttpGet]
     [Route("{id:int}")]
-    public async Task<IActionResult> CalculateRevenueAsync([FromRoute] int id)
+    public async Task<IActionResult> CalculateRevenueAsync([FromRoute] int id, [FromQuery] string? currencyCode)
     {
-        return Ok(await service.CalculateRevenueAsync(id));
+        return Ok(await service.CalculateRevenueAsync(id, currencyCode));
     }
 
 }

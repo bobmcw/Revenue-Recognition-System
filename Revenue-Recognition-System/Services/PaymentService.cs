@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Revenue_Recognition_System.Enums;
 using Revenue_Recognition_System.Exceptions;
@@ -57,7 +58,33 @@ public class PaymentService(DatabaseContext ctx) : IPaymentService
         return string.Join(" ", msgs);
     }
 
-    public async Task<RevenueDto> CalculateRevenueAsync()
+    private async Task<decimal> GetExchangeRateAsync(string currency)
+    {
+        if (currency.Equals("PLN", StringComparison.OrdinalIgnoreCase))
+        {
+            return 1m;
+        }
+        currency = currency.ToLower();
+        using var httpClient = new HttpClient();
+        var url = $"https://api.nbp.pl/api/exchangerates/rates/a/{currency}/?format=json";
+        var json = await httpClient.GetStringAsync(url);
+        using var document = JsonDocument.Parse(json);
+        try
+        {
+            var rate = document
+                .RootElement
+                .GetProperty("rates")[0]
+                .GetProperty("mid")
+                .GetDecimal();
+            return rate;
+        }
+        catch (KeyNotFoundException)
+        {
+            throw new InvalidCurrencyException();
+        } 
+    }
+    
+    public async Task<RevenueDto> CalculateRevenueAsync(string? currency)
     {
         decimal revenue = 0.0m;
         var paidContracts = await ctx.Contracts.Where(c => c.Status == ContractStatus.Paid).ToListAsync();
@@ -74,10 +101,15 @@ public class PaymentService(DatabaseContext ctx) : IPaymentService
         }
 
         expectedRecenue += revenue;
+        if (currency != null)
+        {
+            var rate = await GetExchangeRateAsync(currency);
+            return new RevenueDto { Revenue = revenue * rate , ExpectedRevenue = expectedRecenue * rate };
+        }
         return new RevenueDto { Revenue = revenue, ExpectedRevenue = expectedRecenue };
     }
 
-    public async Task<RevenueDto> CalculateRevenueAsync(int productId)
+    public async Task<RevenueDto> CalculateRevenueAsync(int productId, string? currency)
     {
         decimal revenue = 0.0m;
         var paidContracts = await ctx.Contracts.Where(c => c.Status == ContractStatus.Paid && c.Product.Id == productId).ToListAsync();
