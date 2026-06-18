@@ -86,6 +86,8 @@ public class ClientService(DatabaseContext ctx) : IClientService
                 clientCompany.PhoneNumber = company.Phone;
                 break;
         }
+
+        await ctx.SaveChangesAsync();
     }
 
     public async Task DeleteClient(int id)
@@ -102,10 +104,13 @@ public class ClientService(DatabaseContext ctx) : IClientService
                 individualClient.LastName = "";
                 individualClient.Pesel = "";
                 individualClient.Email = "";
+                individualClient.PhoneNumber = "";
                 individualClient.IsDeleted = true;
                 break;
             case CompanyClient companyClient:
                 throw new IllegalModificationException("company client cannot be deleted");
         }
+
+        await ctx.SaveChangesAsync();
     }
 }
