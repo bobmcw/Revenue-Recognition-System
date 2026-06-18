@@ -21,7 +21,7 @@ public class PaymentService(DatabaseContext ctx) : IPaymentService
             throw new InvalidPaymentException("cannot pay for a paid or canceled contract");
         }
 
-        if (contract.EndDate > DateTime.Now)
+        if (contract.EndDate < DateTime.Now)
         {
             contract.Status = ContractStatus.Canceled;
             await ctx.SaveChangesAsync();

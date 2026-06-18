@@ -68,7 +68,7 @@ public class ProductService(DatabaseContext ctx, IDiscountService discountServic
         if (discounts.Count != 0)
         {
             var discount = discounts.OrderByDescending(d => d.DiscountPercentage).First();
-            cost -= 1.0m / discount.DiscountPercentage;
+            cost -= 1.0m * discount.DiscountPercentage / 100;
             msgs.Add($"applied {discount.DiscountPercentage}% {discount.Name} discount;");
         }
         var contract = new Contract
