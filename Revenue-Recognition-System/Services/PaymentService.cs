@@ -92,6 +92,7 @@ public class PaymentService(DatabaseContext ctx) : IPaymentService
         {
             revenue += paidContract.Cost;
         }
+        revenue += await ctx.SubscriptionPayments.SumAsync(p => p.Amount);
 
         decimal expectedRecenue = 0.0m;
         var pendingContracts = await ctx.Contracts.Where(c => c.Status == ContractStatus.Created).ToListAsync();
@@ -99,12 +100,13 @@ public class PaymentService(DatabaseContext ctx) : IPaymentService
         {
             expectedRecenue += pendingContract.Cost;
         }
+        expectedRecenue += await ctx.Subscriptions.Where(s => s.IsActive).SumAsync(s => s.RenewalPrice);
 
         expectedRecenue += revenue;
         if (currency != null)
         {
             var rate = await GetExchangeRateAsync(currency);
-            return new RevenueDto { Revenue = revenue * rate , ExpectedRevenue = expectedRecenue * rate };
+            return new RevenueDto { Revenue = revenue / rate , ExpectedRevenue = expectedRecenue / rate };
         }
         return new RevenueDto { Revenue = revenue, ExpectedRevenue = expectedRecenue };
     }
@@ -117,6 +119,9 @@ public class PaymentService(DatabaseContext ctx) : IPaymentService
         {
             revenue += paidContract.Cost;
         }
+        revenue += await ctx.SubscriptionPayments
+            .Where(p => p.Subscription.ProductId == productId)
+            .SumAsync(p => p.Amount);
 
         decimal expectedRecenue = 0.0m;
         var pendingContracts = await ctx.Contracts.Where(c => c.Status == ContractStatus.Created && c.Product.Id == productId).ToListAsync();
@@ -124,8 +129,16 @@ public class PaymentService(DatabaseContext ctx) : IPaymentService
         {
             expectedRecenue += pendingContract.Cost;
         }
+        expectedRecenue += await ctx.Subscriptions
+            .Where(s => s.IsActive && s.ProductId == productId)
+            .SumAsync(s => s.RenewalPrice);
 
         expectedRecenue += revenue;
+        if (currency != null)
+        {
+            var rate = await GetExchangeRateAsync(currency);
+            return new RevenueDto { Revenue = revenue / rate, ExpectedRevenue = expectedRecenue / rate };
+        }
         return new RevenueDto { Revenue = revenue, ExpectedRevenue = expectedRecenue };
     }
 }

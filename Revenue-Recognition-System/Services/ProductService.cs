@@ -38,9 +38,10 @@ public class ProductService(DatabaseContext ctx, IDiscountService discountServic
             throw new NoSuchProductException();
         }
 
-        if (client.Contracts.Any(c => c.Product == prod))
+        if (client.Contracts.Any(c => c.Product == prod && c.Status != ContractStatus.Canceled) ||
+            await ctx.Subscriptions.AnyAsync(s => s.ClientId == dto.ClientId && s.ProductId == dto.ProductId && s.IsActive))
         {
-            throw new InvalidDataException("client already has a contract for this product");
+            throw new InvalidDataException("client already has an active contract or subscription for this product");
         }
 
         List<string> msgs = [];
@@ -59,7 +60,8 @@ public class ProductService(DatabaseContext ctx, IDiscountService discountServic
         }
         
         //returning customer discount
-        if ((await ctx.Contracts.Where(c => c.Client == client && c.Status == ContractStatus.Paid).ToListAsync()).Count > 0)
+        if (await ctx.Contracts.AnyAsync(c => c.Client == client && c.Status == ContractStatus.Paid) ||
+            await ctx.Subscriptions.AnyAsync(s => s.ClientId == dto.ClientId && s.Payments.Any()))
         {
             cost -= cost * 0.05m;
             msgs.Add("applied 5% returning client discount;");
@@ -68,7 +70,7 @@ public class ProductService(DatabaseContext ctx, IDiscountService discountServic
         if (discounts.Count != 0)
         {
             var discount = discounts.OrderByDescending(d => d.DiscountPercentage).First();
-            cost -= 1.0m * discount.DiscountPercentage / 100;
+            cost -= cost * discount.DiscountPercentage / 100;
             msgs.Add($"applied {discount.DiscountPercentage}% {discount.Name} discount;");
         }
         var contract = new Contract

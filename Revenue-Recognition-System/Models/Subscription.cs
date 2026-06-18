@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Revenue_Recognition_System.Models;
 
 public class Subscription
@@ -13,6 +15,8 @@ public class Subscription
     public DateTime StartDate { get; set; }
     public DateTime CurrentPeriodStart { get; set; }
     public DateTime CurrentPeriodEnd { get; set; }
+    public int RenewalPeriodMonths { get; set; }
+    [Column(TypeName = "decimal(10,2)")]
     public decimal RenewalPrice { get; set; }
     
     public DateTime NextPayment { get; set; }

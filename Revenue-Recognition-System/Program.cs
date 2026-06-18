@@ -36,6 +36,7 @@ builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IDiscountService, DiscountService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 
 builder.Services.AddSwaggerGen(options =>
 {
