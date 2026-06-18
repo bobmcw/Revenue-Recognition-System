@@ -17,4 +17,5 @@ public abstract class Client
 
    public IEnumerable<Contract> Contracts { get; set; } = new List<Contract>();
    public IEnumerable<Payment> Payments { get; set; } = new List<Payment>();
+   public IEnumerable<Subscription> Subscriptions { get; set; } = new List<Subscription>();
 }
